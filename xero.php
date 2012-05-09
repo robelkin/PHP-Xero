@@ -105,6 +105,7 @@ class Xero {
 			$filterid = ( count($arguments) > 0 ) ? strip_tags(strval($arguments[0])) : false;
 			$modified_after = ( count($arguments) > 1 ) ? str_replace( 'X','T', date( 'Y-m-dXH:i:s', strtotime($arguments[1])) ) : false;
 			$where = ( count($arguments) > 2 ) ? $arguments[2] : false;
+			$acceptHeader = ( !empty( $arguments[4] ) ) ? $arguments[4] : '';
 			if ( is_array($where) && (count($where) > 0) ) {
 				$temp_where = '';
 				foreach ( $where as $wf => $wv ) {
@@ -146,6 +147,14 @@ class Xero {
 				curl_setopt($ch, CURLOPT_HEADER, "If-Modified-Since: $modified_after");
 			}
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			if($acceptHeader)
+			{
+				curl_setopt($ch,CURLOPT_HTTPHEADER,
+					array (
+        				"Accept: application/".$acceptHeader
+    				)
+				);
+			}
 			$temp_xero_response = curl_exec($ch);
 			curl_close($ch);
 			try {
